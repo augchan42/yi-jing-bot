@@ -3,20 +3,99 @@
 
 Discord bot that does your Yi Jing reading.
 
-To run locally, create a [Discord application/bot](https://discord.com/developers/applications) and fill in the required environment variables in the `.env.template` file and rename it to `.env`. 
+## Setup Instructions
 
-```
-npm install 
-node deploy-commands.js
-node index.js 
-```
+### 1. Create Discord Application/Bot
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click "New Application" and give it a name
+3. Go to the "Bot" section in the left sidebar
+4. Click "Add Bot"
+5. Under the bot's username, click "Reset Token" and copy the new token
+   - Keep this token secret! Don't share or commit it
+   - You'll need this for the `.env` file later
 
+### 2. Configure Bot Permissions
+1. In the Developer Portal, click "OAuth2" -> "URL Generator" in the left sidebar
+2. Select these scopes:
+   - `bot`
+   - `applications.commands`
+3. Under "Bot Permissions" select:
+   - Read Messages/View Channels
+   - Send Messages
+   - Use Slash Commands
+4. Copy the generated URL at the bottom
 
-Use `/read` to get your hexagram(s). 
+### 3. Add Bot to Your Server
+1. Open the URL you copied in a new browser tab
+2. Select your server from the dropdown
+3. Click "Authorize"
+4. Complete the CAPTCHA if prompted
 
-`/fullread` will give you an opinionated reading.
+### 4. Local Setup
+1. Clone this repository
+2. Copy `.env.template` to `.env`
+3. Fill in the required environment variables:
+   ```
+   TOKEN=your_bot_token_here
+   CLIENT_ID=your_application_id_here
+   ```
+   - TOKEN: The bot token you got in step 1
+   - CLIENT_ID: Found in your application's "General Information" page
 
+4. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### Credits
+5. Deploy slash commands:
+   ```bash
+   node deploy-commands.js
+   ```
+
+6. Start the bot:
+   ```bash
+   node index.js
+   ```
+
+## Usage
+
+The bot provides several slash commands:
+
+- `/read` - Quick reading showing hexagram symbols and changing lines
+- `/fullread` - Detailed reading with judgments and images
+- `/lookup` - Look up specific hexagrams and their line meanings
+  - Can specify individual lines (e.g., "1,3,5" or "2 4 6")
+  - Or view entire trigrams (lines 1,2,3 or 4,5,6)
+
+## Troubleshooting
+
+### Bot Not Responding
+1. Check that the bot is online in your server
+2. Verify the TOKEN in your .env file matches your bot's token
+3. Make sure you've run deploy-commands.js after any command changes
+4. Check the console for any error messages
+
+### Commands Not Showing
+1. Ensure you've run deploy-commands.js
+2. Verify the CLIENT_ID in your .env matches your application ID
+3. Try removing and re-adding the bot to your server
+
+### Permission Issues
+1. Check that the bot has the required permissions in your server
+2. Verify the bot's role is high enough in the server's role hierarchy
+3. Make sure the bot has access to the channels you're using it in
+
+## Technical Notes
+
+### ES Modules
+This bot uses ES Modules instead of CommonJS. This means:
+
+- `"type": "module"` is set in package.json
+- We use `import/export` instead of `require()/module.exports`
+- File extensions (`.js`) are required in import paths
+- All JavaScript files use ES Module syntax:
+
+## Credits
 
 [I Ching CLI](https://github.com/abbeymondshein/i-ching-cli) for the traditional calculations to get the hexagrams.
+
