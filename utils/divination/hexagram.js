@@ -45,7 +45,7 @@ export const formatChangingLines = (changingLines, hexagram) => {
   return changingLines.map(line => {
     const lineType = line.value === "6" ? "yin" : "yang";
     const lineText = hexagram.lines[line.position - 1]; // Arrays are 0-based, positions are 1-based
-    return `Line ${line.position} (${lineType}): ${lineText}`;
+    return `Line \`${line.position}\` (${lineType}): ${lineText}`;
   }).join('\n');
 };
 

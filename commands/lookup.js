@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "discord.js";
 import hexagrams from "../hexagrams.js";
+import { formatHexagramResult } from "../utils/divination/formatter.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -34,6 +35,7 @@ export default {
   async execute(interaction) {
     const hexagramNumber = interaction.options.getInteger("hexagram");
     const lineInput = interaction.options.getString("lines");
+    const presetInput = interaction.options.getString("preset");
 
     // Find the hexagram
     const hexagram = hexagrams.find(h => h.number === hexagramNumber);
@@ -47,37 +49,37 @@ export default {
 
     const resultText = [];
 
-    // Basic hexagram information
-    resultText.push(`${hexagram.unicode || hexagram.symbol} Hexagram ${hexagram.number}: ${hexagram.name.en} | ${hexagram.name.zh}`);
-    resultText.push(`\nImage:`);
-    resultText.push(hexagram.image);
-    resultText.push(`\nJudgment:`);
-    resultText.push(hexagram.judgment);
+    // Basic hexagram information using formatter
+    resultText.push(formatHexagramResult(hexagram, ""));
+
+    resultText.push(`\n**Image:**\n${hexagram.image}`);
+    resultText.push(`\n**Judgment:**\n${hexagram.judgment}`);
 
     // Handle line selection
-    if (lineInput) {
+    const finalLineInput = lineInput || presetInput;
+    if (finalLineInput) {
       // Parse the line input, handling both comma and space delimited lists
-      const selectedLines = lineInput
+      const selectedLines = finalLineInput
         .split(/[,\s]+/)  // Split on commas or whitespace
         .map(num => parseInt(num.trim()))
         .filter(num => !isNaN(num) && num >= 1 && num <= 6);  // Validate numbers
 
       if (selectedLines.length === 0) {
-        resultText.push(`\nInvalid line selection. Please use numbers 1-6, separated by commas or spaces.`);
+        resultText.push(`\n*Invalid line selection. Please use numbers 1-6, separated by commas or spaces.*`);
       } else {
-        resultText.push(`\nSelected Lines:`);
+        resultText.push(`\n**Selected Lines:**`);
         selectedLines.forEach(lineNum => {
           const lineText = hexagram.lines[lineNum - 1];
           if (lineText) {
-            resultText.push(`${lineNum}: ${lineText}`);
+            resultText.push(`\`${lineNum}\`: ${lineText}`);
           }
         });
       }
     } else {
       // Show all lines if no selection
-      resultText.push(`\nLines:`);
+      resultText.push(`\n**Lines:**`);
       hexagram.lines.forEach((line, index) => {
-        resultText.push(`${index + 1}: ${line}`);
+        resultText.push(`\`${index + 1}\`: ${line}`);
       });
     }
 
