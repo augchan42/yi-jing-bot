@@ -85,6 +85,98 @@ The bot provides several slash commands:
 2. Verify the bot's role is high enough in the server's role hierarchy
 3. Make sure the bot has access to the channels you're using it in
 
+## Server Deployment
+
+### GitHub Setup on Ubuntu Server
+1. Install GitHub CLI:
+   ```bash
+   # Add GitHub CLI repository
+   curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+   sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+   
+   # Install gh
+   sudo apt update
+   sudo apt install gh
+   ```
+
+2. Authenticate with GitHub:
+   ```bash
+   gh auth login
+   ```
+   - Select "GitHub.com"
+   - Select "HTTPS"
+   - Select "Y" for authentication with your GitHub credentials
+   - Complete the login process in your browser
+
+3. Clone the repository:
+   ```bash
+   gh repo clone yourusername/yi-jing-bot
+   cd yi-jing-bot
+   ```
+
+### Running Bot with Forever
+
+1. Install Forever globally:
+   ```bash
+   sudo npm install -g forever
+   ```
+
+2. Start the bot:
+   ```bash
+   forever start index.js
+   ```
+
+3. Useful Forever commands:
+   ```bash
+   # List all running processes
+   forever list
+
+   # Stop the bot
+   forever stop index.js
+
+   # Restart the bot
+   forever restart index.js
+
+   # Stop all processes
+   forever stopall
+
+   # View logs
+   forever logs index.js
+   ```
+
+4. To run on system startup, add to crontab:
+   ```bash
+   # Open crontab editor
+   crontab -e
+
+   # Add this line
+   @reboot cd /path/to/yi-jing-bot && /usr/local/bin/forever start index.js
+   ```
+
+### Updating the Bot
+1. Pull latest changes:
+   ```bash
+   cd /path/to/yi-jing-bot
+   gh repo sync
+   ```
+
+2. Install any new dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Deploy new commands if needed:
+   ```bash
+   node deploy-commands.js
+   ```
+
+4. Restart the bot:
+   ```bash
+   forever restart index.js
+   ```
+
+   
 ## Technical Notes
 
 ### ES Modules
